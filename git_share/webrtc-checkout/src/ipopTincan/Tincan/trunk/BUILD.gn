@@ -1,0 +1,35 @@
+import("//webrtc.gni")
+import("//build/config/c++/c++.gni")
+executable("ipop-tincan") {
+    sources = [
+        "src/tincan.cc",
+        "src/control_dispatch.cc",
+        "src/control_listener.cc",
+        "src/tincan_control.cc",
+        "src/tincan_main.cc",
+        "src/virtual_link.cc",
+        "src/tap_frame.cc",
+        "src/single_link_tunnel.cc",
+        "src/basic_tunnel.cc",
+    ]
+
+    cflags = [ "-std=c++14 --stdlib=libc++ -pthread -g2 -gsplit-dwarf -fno-strict-aliasing --param=ssp-buffer-size=4 -fstack-protector -funwind-tables -fPIC -pipe -Wall -fno-rtti" ]
+    defines = [ "LINUX",
+                "_IPOP_LINUX",
+                "WEBRTC_POSIX",
+                "WEBRTC_LINUX",
+                "_GLIBCXX_USE_CXX11_ABI=0",
+    ]
+    include_dirs = [ "//ipopTincan/Tincan/trunk/include",
+                     "//ipopTincan/Tincan/external/include",
+                     "//ipopTincan/Tincan/trunk/include/linux",
+                     "//ipopTincan/Tincan/trunk/include/windows",
+    ] # include/linux include/windows ../external/include ../external/include/webrtc" ]
+    if (is_win) {
+        sources += [ "src/windows/tapdev_win.cc" ]
+    }
+    if (is_linux) {
+        sources += [ "src/linux/tapdev_lnx.cc" ]
+    }
+}
+
